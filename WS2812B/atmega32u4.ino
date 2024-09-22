@@ -65,7 +65,18 @@ void note(byte pitch, byte velocity) {
       }
     }
   }
-  
+
+  // Log the note and velocity for debugging
+  if (velocity > 0) {
+    Serial.print("Note On: ");
+    Serial.print(pitch);
+    Serial.print(", Velocity: ");
+    Serial.println(velocity);
+  } else {
+    Serial.print("Note Off: ");
+    Serial.println(pitch);
+  }
+
   // Set the LED color with brightness adjustment
   _LED.setPixelColor(ledIndex, 
                      applyBrightness(_R[velocity]), 
@@ -75,6 +86,7 @@ void note(byte pitch, byte velocity) {
 }
 
 void setup() {
+  Serial.begin(115200);  // Start serial communication at 115200 baud
   _LED.begin();
   _LED.show();
 }
