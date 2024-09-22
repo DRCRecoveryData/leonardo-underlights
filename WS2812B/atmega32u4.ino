@@ -24,6 +24,9 @@ const byte _R[128] = {0, 61, 125, 190, 255, 255, 61, 125, 190, 255, 255, 61, 125
 const byte _G[128] = {0, 0, 0, 0, 125, 0, 12, 28, 45, 158, 61, 28, 61, 93, 190, 125, 45, 93, 142, 223, 190, 61, 125, 190, 255, 255, 61, 125, 190, 255, 255, 61, 125, 190, 255, 255, 61, 125, 190, 255, 255, 61, 125, 190, 255, 255, 61, 125, 190, 255, 255, 61, 125, 190, 255, 255, 61, 125, 190, 255, 255, 61, 125, 190, 255, 255, 45, 93, 142, 223, 190, 28, 61, 93, 190, 125, 12, 28, 45, 158, 61, 0, 0, 0, 125, 0, 0, 0, 0, 125, 0, 0, 0, 0, 125, 0, 0, 0, 0, 125, 0, 0, 0, 0, 125, 0, 0, 0, 0, 125, 0, 0, 0, 0, 125, 0, 0, 0, 0, 125, 0, 36, 73, 109, 146, 182, 219, 255};
 const byte _B[128] = {0, 0, 0, 0, 125, 0, 0, 0, 0, 125, 0, 0, 0, 0, 125, 0, 0, 0, 0, 125, 0, 0, 0, 0, 125, 0, 0, 0, 0, 125, 0, 0, 0, 0, 125, 0, 0, 0, 0, 125, 0, 0, 0, 0, 125, 0, 12, 28, 45, 158, 61, 28, 61, 93, 190, 125, 45, 93, 142, 223, 190, 61, 125, 190, 255, 255, 61, 125, 190, 255, 255, 61, 125, 190, 255, 255, 61, 125, 190, 255, 255, 61, 125, 190, 255, 255, 61, 125, 190, 255, 255, 61, 125, 190, 255, 255, 61, 125, 190, 255, 255, 61, 125, 190, 255, 255, 45, 93, 142, 223, 190, 28, 61, 93, 190, 125, 12, 28, 45, 158, 61, 36, 73, 109, 146, 182, 219, 255};
 
+// Brightness control (0 to 100)
+byte brightness = 100;
+
 /*
  * MIDI handler
  * ------------
@@ -45,6 +48,11 @@ const byte noteToLED[8][8] = {
 
 bool update = false;
 
+// Adjust color by brightness level (0-100)
+byte applyBrightness(byte colorValue) {
+  return (colorValue * brightness) / 100;
+}
+
 // Convert MIDI note to LED index using the noteToLED array
 void note(byte pitch, byte velocity) {
   // Find the LED index corresponding to the MIDI note
@@ -57,7 +65,12 @@ void note(byte pitch, byte velocity) {
       }
     }
   }
-  _LED.setPixelColor(ledIndex, _R[velocity], _G[velocity], _B[velocity]);
+  
+  // Set the LED color with brightness adjustment
+  _LED.setPixelColor(ledIndex, 
+                     applyBrightness(_R[velocity]), 
+                     applyBrightness(_G[velocity]), 
+                     applyBrightness(_B[velocity]));
   update = true;
 }
 
